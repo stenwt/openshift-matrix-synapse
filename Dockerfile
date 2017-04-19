@@ -19,8 +19,6 @@ RUN pip install https://github.com/matrix-org/synapse/tarball/master
 
 RUN mkdir /var/run/synapse && python -B -m synapse.app.homeserver -c /var/run/synapse/homeserver.yaml --generate-config --server-name=openshift-synapse --report-stats no
 
-EXPOSE 8008
+EXPOSE 8448
 
-COPY start.sh /opt/app-root/src/
-
-CMD ["/opt/app-root/src/start.sh"]
+CMD ["python", "-m", "synapse.app.homeserver", "--config-path", "/var/run/synapse/homeserver.yaml"]
