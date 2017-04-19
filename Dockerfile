@@ -21,4 +21,6 @@ RUN mkdir /var/run/synapse && python -B -m synapse.app.homeserver -c /var/run/sy
 
 EXPOSE 8008
 
-CMD ["python -m synapse.app.homeserver --config-path /var/run/synapse/homeserver.yaml"]
+COPY start.sh /opt/app-root/src/
+
+CMD ["/opt/app-root/src/start.sh"]
