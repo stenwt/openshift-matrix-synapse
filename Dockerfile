@@ -1,6 +1,4 @@
-
-# matrix-synapse-centos7-openshift
-FROM openshift/base-centos7
+FROM centos:7
 
 # MAINTAINER Sten Turpin <sten@redhat.com>
 
@@ -20,8 +18,6 @@ RUN pip install --upgrade setuptools
 RUN pip install https://github.com/matrix-org/synapse/tarball/master
 
 RUN mkdir /var/run/synapse && python -B -m synapse.app.homeserver -c /var/run/synapse/homeserver.yaml --generate-config --server-name=openshift-synapse --report-stats no
-
-USER 1001
 
 EXPOSE 8008
 
