@@ -21,8 +21,10 @@ RUN mkdir -p /opt/app-root/src/synapse && python -B -m synapse.app.homeserver --
 
 RUN for str in media_store uploads homeserver.db homeserver.log homeserver.pid ; do sed -i "s/\/$str/\/opt\/app-root\/src\/synapse\/$str/" /opt/app-root/src/synapse/homeserver.yaml; done
 
+RUN sed -i 's/\/homeserver.log/\/opt\/app-root\/src\/synapse\/homeserver.log/' /opt/app-root/src/synapse/openshift-synapse.log.config
+
 RUN chmod -R a+rwx /opt/app-root/src/synapse
 
 EXPOSE 8448
 
-CMD ["python", "-m", "synapse.app.homeserver", "--config-path", "/opt/app-root/src/synapse/homeserver.yaml", "--log-file", "/opt/app-root/src/synapse/homeserver.log" ]
+CMD ["python", "-m", "synapse.app.homeserver", "--config-path", "/opt/app-root/src/synapse/homeserver.yaml" ]
