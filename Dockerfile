@@ -17,8 +17,10 @@ RUN pip install --upgrade setuptools
 
 RUN pip install https://github.com/matrix-org/synapse/tarball/master
 
-RUN mkdir /var/run/synapse && python -B -m synapse.app.homeserver -c /var/run/synapse/homeserver.yaml --generate-config --server-name=openshift-synapse --report-stats no
+RUN mkdir -p /opt/app-root/src/synapse && python -B -m synapse.app.homeserver --config-path /opt/app-root/src/synapse/homeserver.yaml --generate-config --server-name=openshift-synapse --report-stats no
+
+RUN for str in media_store uploads homeserver.db homeserver.log homeserver.pid ; do sed -i "s/\/$str/\/opt\/app-root\/src\/synapse\/$str/" /opt/app-root/src/synapse/homeserver.yaml; done
 
 EXPOSE 8448
 
-CMD ["python", "-m", "synapse.app.homeserver", "--config-path", "/var/run/synapse/homeserver.yaml"]
+CMD ["python", "-m", "synapse.app.homeserver", "--config-path", "/opt/app-root/src/synapse/homeserver.yaml"]
