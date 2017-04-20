@@ -25,4 +25,4 @@ RUN chmod -R a+rwx /opt/app-root/src/synapse
 
 EXPOSE 8448
 
-CMD ["python", "-m", "synapse.app.homeserver", "--config-path", "/opt/app-root/src/synapse/homeserver.yaml"]
+CMD ["python", "-m", "synapse.app.homeserver", "--config-path", "/opt/app-root/src/synapse/homeserver.yaml", "--log-file", "/opt/app-root/src/synapse/homeserver.log" ]
