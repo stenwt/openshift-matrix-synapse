@@ -6,7 +6,7 @@ ENV REPORT_STATS yes
 
 LABEL io.k8s.description="Platform for building matrix synapse" \
       io.k8s.display-name="builder matrix synapse" \
-      io.openshift.expose-services="8080:http" \
+      io.openshift.expose-services="8008:http" \
       io.openshift.tags="builder,matrix,synapse"
 
 RUN yum -y install epel-release && yum clean all
@@ -17,14 +17,18 @@ RUN pip install --upgrade setuptools
 
 RUN pip install https://github.com/matrix-org/synapse/tarball/master
 
+RUN pip install psycopg2
+
 RUN mkdir -p /opt/app-root/src/synapse && python -B -m synapse.app.homeserver --config-path /opt/app-root/src/synapse/homeserver.yaml --generate-config --server-name=openshift-synapse --report-stats no
 
-RUN for str in media_store uploads homeserver.db homeserver.log homeserver.pid ; do sed -i "s/\/$str/\/opt\/app-root\/src\/synapse\/$str/" /opt/app-root/src/synapse/homeserver.yaml; done
+RUN mkdir /synapse
 
-RUN sed -i 's/\/homeserver.log/\/opt\/app-root\/src\/synapse\/homeserver.log/' /opt/app-root/src/synapse/openshift-synapse.log.config
+RUN for str in media_store uploads homeserver.db homeserver.log homeserver.pid ; do sed -i "s/\/$str/\/synapse\/$str/" /opt/app-root/src/synapse/homeserver.yaml; done
 
-RUN chmod -R a+rwx /opt/app-root/src/synapse
+RUN sed -i 's/\/homeserver.log/\/synapse\/homeserver.log/' /opt/app-root/src/synapse/openshift-synapse.log.config
 
-EXPOSE 8448
+RUN chmod -R a+rwx /opt/app-root/src/synapse /synapse
+
+EXPOSE 8008
 
 CMD ["python", "-m", "synapse.app.homeserver", "--config-path", "/opt/app-root/src/synapse/homeserver.yaml" ]
